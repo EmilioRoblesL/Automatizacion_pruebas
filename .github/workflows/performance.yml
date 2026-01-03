@@ -6,15 +6,36 @@ on:
 jobs:
   k6:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
 
-      - name: Run k6 test (Docker)
+      - name: Ejecutar prueba de performance con k6 (Docker)
         run: |
-          docker run --rm -i grafana/k6 run - < performance/login_test.js | tee k6-output.txt
+          docker run --rm -i grafana/k6 run \
+            --summary-export=performance/k6-summary.json \
+            - < performance/login_test.js | tee k6-output.txt
 
-      - name: Upload k6 output
+      - name: Subir métricas de performance (TXT + JSON)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: k6-results
-          path: k6-output.txt
+          name: k6-performance-results
+          path: |
+            k6-output.txt
+            performance/k6-summary.json
+
+      - name: Dashboard de Performance (Job Summary)
+        if: always()
+        run: |
+          echo "## 📊 Dashboard de Performance (k6)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Script ejecutado: performance/login_test.js" >> $GITHUB_STEP_SUMMARY
+          echo "- Resultados descargables: artifact **k6-performance-results**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Indicadores monitoreados" >> $GITHUB_STEP_SUMMARY
+          echo "- TPS / RPS (http_reqs/s)" >> $GITHUB_STEP_SUMMARY
+          echo "- Latencia (p95 de http_req_duration)" >> $GITHUB_STEP_SUMMARY
+          echo "- Errores (http_req_failed)" >> $GITHUB_STEP_SUMMARY
+          echo "- Checks OK / Fail" >> $GITHUB_STEP_SUMMARY
