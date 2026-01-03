@@ -1,0 +1,20 @@
+name: Performance - k6
+
+on:
+  workflow_dispatch:
+
+jobs:
+  k6:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run k6 test (Docker)
+        run: |
+          docker run --rm -i grafana/k6 run - < performance/login_test.js | tee k6-output.txt
+
+      - name: Upload k6 output
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-results
+          path: k6-output.txt
