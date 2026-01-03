@@ -1,4 +1,4 @@
-name: CI - Tests (JUnit + Cucumber BDD)
+name: CI - Pruebas Funcionales (JUnit + Cucumber BDD)
 
 on:
   push:
@@ -11,21 +11,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout del repositorio
         uses: actions/checkout@v4
 
-      - name: Set up Java 17
+      - name: Configurar Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
           cache: maven
 
-      - name: Run unit + BDD tests (Maven)
+      - name: Ejecutar pruebas unitarias y BDD (Maven)
         run: mvn -B clean test
 
-      # Reporte navegable (HTML) + JSON de Cucumber
-      - name: Upload Cucumber BDD report (HTML/JSON)
+      # Reporte navegable de Cucumber (HTML + JSON)
+      - name: Subir reporte BDD (Cucumber)
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -34,10 +34,22 @@ jobs:
             target/cucumber-report.html
             target/cucumber-report.json
 
-      # Opcional pero recomendado: reportes de surefire (útil para evidencia)
-      - name: Upload Surefire reports
+      # Reportes de pruebas unitarias JUnit
+      - name: Subir reportes Surefire (JUnit)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: surefire-reports
           path: target/surefire-reports
+
+      # Dashboard funcional (simulado) dentro del pipeline
+      - name: Dashboard de Pruebas Funcionales
+        if: always()
+        run: |
+          echo "## ✅ Dashboard de Pruebas Funcionales" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Pruebas unitarias ejecutadas con JUnit." >> $GITHUB_STEP_SUMMARY
+          echo "- Escenarios BDD ejecutados con Cucumber." >> $GITHUB_STEP_SUMMARY
+          echo "- Artifacts generados:" >> $GITHUB_STEP_SUMMARY
+          echo "  - cucumber-bdd-report (HTML/JSON)" >> $GITHUB_STEP_SUMMARY
+          echo "  - surefire-reports" >> $GITHUB_STEP_SUMMARY
