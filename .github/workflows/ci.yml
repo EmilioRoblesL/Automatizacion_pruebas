@@ -1,17 +1,17 @@
-name: CI - Automatizacion Pruebas
+name: CI - Tests (JUnit + Cucumber BDD)
 
 on:
   push:
-    branches: ["main"]
+    branches: [ "main", "master" ]
   pull_request:
-    branches: ["main"]
+    branches: [ "main", "master" ]
 
 jobs:
-  build-test:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Set up Java 17
@@ -21,13 +21,23 @@ jobs:
           java-version: "17"
           cache: maven
 
-      - name: Run tests
-        run: mvn -B test
+      - name: Run unit + BDD tests (Maven)
+        run: mvn -B clean test
 
-      # Output/reporte accesible para el equipo (artefacto descargable)
-      - name: Upload surefire reports
+      # Reporte navegable (HTML) + JSON de Cucumber
+      - name: Upload Cucumber BDD report (HTML/JSON)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-bdd-report
+          path: |
+            target/cucumber-report.html
+            target/cucumber-report.json
+
+      # Opcional pero recomendado: reportes de surefire (útil para evidencia)
+      - name: Upload Surefire reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: surefire-reports
-          path: target/surefire-reports/**
+          path: target/surefire-reports
