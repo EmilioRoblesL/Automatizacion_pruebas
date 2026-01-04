@@ -1,114 +1,177 @@
-# Automatización de Pruebas - Proyecto Maven + CI
+Automatización de Pruebas – Proyecto Maven + BDD + CI/CD
 
-## Objetivo
-Construir un proyecto Java con Maven que incluya pruebas unitarias automatizadas y un pipeline de Integración Continua (CI) en GitHub Actions, ejecutando los tests en cada push o pull request.
+Objetivo
+Construir un proyecto Java con Maven que incorpore pruebas unitarias, pruebas BDD, pruebas de performance y un pipeline de Integración Continua (CI) en GitHub Actions, asegurando visibilidad, calidad de resultados y detección temprana de fallos.
 
-- Repositorio Git con commits frecuentes y mensajes claros (chore:, test:, ci:).
-- Proyecto Maven configurado con dependencias de testing (JUnit).
-- Pruebas unitarias atómicas e independientes (suma y resta).
-- Estructura estándar Maven:
-  - src/main/java (código)
-  - src/test/java (tests)
-- .gitignore para evitar subir target/ y archivos del IDE.
-- Pipeline CI con GitHub Actions que ejecuta mvn test.
-- Reporte/output accesible: artefacto surefire-reports generado por el pipeline.
-- Evidencia con capturas: ejecución local y ejecución en CI.
+Tecnologías utilizadas
+Java 17
+Maven
+JUnit 5
+Cucumber (BDD)
+k6 (Performance testing)
+Git y GitHub
+GitHub Actions (CI/CD)
 
-## Estructura del proyecto
-
+Estructura del proyecto
 demo/
-├── src/
-│ ├── main/java/com/example/
-│ │ └── App.java
-│ └── test/java/com/example/
-│ ├── AppTest.java
-│ └── CalculadoraTest.java
-├── .github/
-│ └── workflows/
-│ └── ci.yml
-├── pom.xml
-├── .gitignore
-└── README.md
-
-## Configuración de Maven
-El proyecto utiliza Maven con JUnit para pruebas unitarias.  
-Las dependencias están definidas en el archivo pom.xml.
-
-## Pruebas unitarias
-Se implementaron pruebas unitarias atómicas e independientes:
-
-- **Suma:** valida que 2 + 3 = 5
-- **Resta:** valida que 5 - 2 = 3
-
-Archivo principal:
-- src/test/java/com/example/CalculadoraTest.java
-
----
-
-## Ejecución local de pruebas
-Para ejecutar las pruebas en el entorno local:
-
-bash
-mvn test
-Resultado esperado:
-
-BUILD SUCCESS
-
-Todas las pruebas ejecutadas sin errores
+src/
+main/java/com/example/
+App.java
+test/java/
+com/example/
+AppTest.java
+CalculadoraTest.java
+bdd/
+RunCucumberTest.java
+steps/
+LoginSteps.java
+src/test/resources/
+features/
+login.feature
+performance/
+login_test.js
+.github/
+workflows/
+ci.yml
+performance.yml
+pom.xml
+.gitignore
+README.md
 
 Control de versiones (Git)
-Comandos utilizados
-Inicialización y configuración:
+Se utilizó Git con commits frecuentes y mensajes claros, siguiendo buenas prácticas.
 
-git init
-git branch -M main
-Ejemplo de commits:
+Ejemplos de commits:
+chore: estructura inicial proyecto maven
+test: agregar pruebas unitarias de suma y resta
+test: agregar escenarios BDD con Cucumber
+ci: agregar pipeline de integración continua
+perf: agregar pruebas de performance con k6
 
-git commit -m "chore: estructura inicial proyecto maven"
-git commit -m "test: agregar pruebas unitarias de suma y resta"
-git commit -m "ci: agregar pipeline de integración continua con GitHub Actions"
-Archivo .gitignore
-Se excluyen archivos innecesarios del repositorio:
+Configuración de Maven
+El proyecto está configurado mediante el archivo pom.xml, incorporando dependencias para pruebas unitarias con JUnit 5, pruebas BDD con Cucumber y ejecución de pruebas desde Maven mediante el comando mvn test.
 
-git.ignore
-# Maven
-/target/
+Pruebas unitarias
+Se implementaron pruebas unitarias atómicas e independientes para validar operaciones básicas:
 
-# IDEs
-/.idea/
-.vscode/
+Suma: valida que 2 + 3 = 5
 
-# OS
-.DS_Store
-Thumbs.db
+Resta: valida que 5 - 2 = 3
+
+Archivo principal:
+src/test/java/com/example/CalculadoraTest.java
+
+Pruebas BDD (Behavior Driven Development)
+
+Sesión Three Amigos (simulada)
+Se simuló una sesión Three Amigos considerando los siguientes roles:
+
+Product Owner: define las reglas del negocio
+
+QA: define los criterios de aceptación
+
+Desarrollador: valida la factibilidad técnica
+
+Funcionalidad definida: Login de usuario.
+
+Escenarios en Gherkin
+Se implementaron escenarios BDD utilizando lenguaje Gherkin:
+
+Login exitoso con credenciales válidas
+
+Login fallido por credenciales inválidas o campos vacíos (Scenario Outline con Examples)
+
+Archivo:
+src/test/resources/features/login.feature
+
+Step Definitions
+Los pasos de los escenarios fueron implementados en Java siguiendo buenas prácticas.
+
+Archivo:
+src/test/java/bdd/steps/LoginSteps.java
+
+Ejecución local de pruebas
+Para ejecutar las pruebas en el entorno local:
+
+mvn clean test
+
+Resultado esperado:
+BUILD SUCCESS
+Todas las pruebas ejecutadas correctamente.
+
 Pipeline de Integración Continua (CI)
-Ruta
+Pipeline de pruebas funcionales
+Ruta del workflow:
 .github/workflows/ci.yml
 
-Funcionalidad
-El pipeline realiza las siguientes acciones:
-Descarga el repositorio.
-Configura Java 17.
-Ejecuta mvn test.
-Genera y publica el artefacto con los reportes de pruebas (surefire-reports).
+Funcionalidad del pipeline:
+Descarga del repositorio
+Configuración de Java 17
+Ejecución de pruebas unitarias y BDD
+Generación de reportes
+Publicación de artifacts
+Dashboard resumido mediante Job Summary
 
-Eventos
+Artifacts generados:
+cucumber-bdd-report (HTML y JSON)
+surefire-reports
+
 El pipeline se ejecuta automáticamente en:
-push a la rama main
-pull request hacia la rama main
+Push a la rama main
+Pull request hacia la rama main
 
-Reportes de pruebas
-Los resultados de las pruebas se generan mediante Maven Surefire y se publican como artefacto descargable en GitHub Actions:
+Pruebas de performance
+Herramienta
+Se utilizó k6 para diseñar una prueba básica de performance sobre la funcionalidad de login.
 
-target/surefire-reports
+Archivo:
+performance/login_test.js
 
-Esto permite al equipo revisar el resultado de los tests sin necesidad de ejecutar el proyecto localmente.
+Escenario de carga:
+10 usuarios virtuales concurrentes
+Duración de 30 segundos
+
+Indicadores monitoreados:
+TPS / RPS (requests por segundo)
+Latencia (percentil p95)
+Errores (http_req_failed)
+Checks funcionales
+
+Pipeline de performance
+Ruta del workflow:
+.github/workflows/performance.yml
+
+Funcionalidad:
+Ejecución de pruebas k6 mediante Docker
+Generación de métricas de performance
+Publicación de artifacts
+Dashboard resumido en GitHub Actions
+
+Artifact generado:
+k6-performance-results
+
+Dashboard y métricas
+Se implementa un dashboard de calidad simulado utilizando GitHub Actions Job Summary, permitiendo visualizar:
+Estado de las pruebas funcionales
+Estado de las pruebas de performance
+Acceso a artifacts con reportes descargables
+Esto permite al equipo revisar la calidad del sistema sin necesidad de ejecutar pruebas localmente.
+
+Alertas automáticas
+Las pruebas funcionales fallan automáticamente si mvn test retorna error.
+Las pruebas de performance utilizan thresholds en k6 para controlar errores y latencia.
+Si los umbrales definidos se superan, el pipeline falla automáticamente, actuando como alerta ante degradación del sistema.
+Se incluye un resumen visual de alertas en el Job Summary del pipeline.
 
 Evidencias
 Se incluyen capturas de pantalla que muestran:
-Ejecución local de mvn test con resultado exitoso.
-Ejecución del pipeline en GitHub Actions en estado Success.
-Artefacto generado con los reportes de pruebas.
+Ejecución local de mvn test con resultado exitoso
+Ejecución del pipeline CI en estado Success
+Artifacts generados (Cucumber, Surefire y k6)
+Dashboard resumido en GitHub Actions
 
 Autor
-Proyecto desarrollado como actividad académica de automatización de pruebas Emilio Robles. Iplacex 2025-2026
+Proyecto desarrollado como actividad académica de Automatización de Pruebas.
+Autor: Emilio Robles
+Institución: IPLACEX
+Periodo académico: 2025 – 2026
